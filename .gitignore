@@ -1,0 +1,10 @@
+__pycache__/
+*.pyc
+.env
+output/
+*.mp4
+*.mp3
+*.wav
+*.srt
+youtube_token.json
+youtube_client_secret.json
