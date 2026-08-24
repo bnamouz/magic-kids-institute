@@ -1,7 +1,8 @@
-openai>=1.40
-fal-client>=0.5
-requests>=2.31
-supabase>=2.5
-google-api-python-client>=2.140
-google-auth>=2.32
-google-auth-oauthlib>=1.2
+openai>=1.40.0
+requests>=2.31.0
+supabase>=2.7.0
+google-auth>=2.29.0
+google-auth-oauthlib>=1.2.0
+google-api-python-client>=2.140.0
+fal-client>=0.4.0
+python-dotenv>=1.0.1
