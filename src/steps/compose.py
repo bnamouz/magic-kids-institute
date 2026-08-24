@@ -12,26 +12,60 @@ MUSIC_DIR = config.ASSETS / "music"
 
 def _overlays_vf(target: float) -> str:
     """Return ffmpeg overlay filters for retention boosts:
-    - Hook flash: bright yellow 'MAGIC INSIDE!' text in first 2s
-    - Subscribe CTA: 'SUBSCRIBE for daily magic!' in last 2s
-    Both use drawtext with fontcolor + shadow, no external font file needed.
+    - Hook flash: bold 3D-style 'MAGIC!' burst at TOP in first 2.5s
+      Layered multi-color shadows create depth; scales up 1.0->1.15.
+    - Subscribe CTA: 'SUBSCRIBE!' banner in last 2.5s.
+    Uses DejaVu Sans Bold (always present in Debian slim base image).
     """
     cta_start = max(0.5, target - 2.5)
-    # DejaVu Sans is present in the sandbox/container by default
     font = "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"
-    hook = (
-        f"drawtext=fontfile={font}:text='MAGIC INSIDE\\!':"
-        "fontsize=120:fontcolor=yellow:borderw=6:bordercolor=black:"
-        "x=(w-text_w)/2:y=h*0.15:"
-        "enable='between(t,0,2)'"
+
+    # 3D hook: stacked drawtext layers create a chunky 3D shadow.
+    # Order matters: deepest shadow drawn first, brightest on top.
+    def _hook_layer(dx, dy, color, size=180):
+        return (
+            f"drawtext=fontfile={font}:text='MAGIC\\!':"
+            f"fontsize={size}:fontcolor={color}:"
+            f"x=(w-text_w)/2+{dx}:y=h*0.06+{dy}:"
+            f"enable='between(t,0,2.5)'"
+        )
+
+    hook_layers = [
+        _hook_layer(12, 12, "purple"),      # deep back shadow
+        _hook_layer(8, 8, "deeppink"),
+        _hook_layer(4, 4, "blue"),
+        _hook_layer(0, 0, "yellow"),        # main face
+    ]
+    # Add thick black outline on top layer via bordered drawtext
+    hook_layers.append(
+        f"drawtext=fontfile={font}:text='MAGIC\\!':"
+        f"fontsize=180:fontcolor=yellow:borderw=8:bordercolor=black:"
+        f"x=(w-text_w)/2:y=h*0.06:"
+        f"enable='between(t,0,2.5)'"
     )
-    cta = (
-        f"drawtext=fontfile={font}:text='SUBSCRIBE for daily magic\\!':"
-        "fontsize=70:fontcolor=white:borderw=5:bordercolor=purple:"
-        "x=(w-text_w)/2:y=h*0.82:"
+
+    # Subscribe CTA — also 3D but at bottom
+    def _cta_layer(dx, dy, color, size=95):
+        return (
+            f"drawtext=fontfile={font}:text='SUBSCRIBE\\!':"
+            f"fontsize={size}:fontcolor={color}:"
+            f"x=(w-text_w)/2+{dx}:y=h*0.82+{dy}:"
+            f"enable='between(t,{cta_start},{target})'"
+        )
+
+    cta_layers = [
+        _cta_layer(6, 6, "purple"),
+        _cta_layer(3, 3, "deeppink"),
+        _cta_layer(0, 0, "white"),
+    ]
+    cta_layers.append(
+        f"drawtext=fontfile={font}:text='SUBSCRIBE\\!':"
+        f"fontsize=95:fontcolor=white:borderw=6:bordercolor=purple:"
+        f"x=(w-text_w)/2:y=h*0.82:"
         f"enable='between(t,{cta_start},{target})'"
     )
-    return f"{hook},{cta}"
+
+    return ",".join(hook_layers + cta_layers)
 
 
 def _run(cmd: list[str]) -> None:
@@ -130,7 +164,8 @@ def build_srt_from_alignment(words: list[dict], chunks: list[str], out: Path) ->
 
 
 def build_srt_evenly(captions: list[str], audio_dur: float, out: Path) -> Path:
-    """Song captions distributed evenly across the sung audio."""
+    """Song captions distributed evenly across the sung audio.
+    Fallback used only when forced alignment fails."""
     caps = [c for c in captions if c.strip()]
     per = audio_dur / len(caps)
     lines = []
@@ -138,6 +173,101 @@ def build_srt_evenly(captions: list[str], audio_dur: float, out: Path) -> Path:
         lines.append(f"{i+1}\n{_fmt(i*per)} --> {_fmt((i+1)*per)}\n{c}\n")
     out.write_text("\n".join(lines), encoding="utf-8")
     return out
+
+
+def build_srt_song_synced(
+    words: list[dict],
+    caption_lines: list[str],
+    audio_dur: float,
+    out: Path,
+) -> Path:
+    """Song captions synced to sung audio via forced alignment.
+
+    Given force-aligned word timings and the original caption lines
+    (each line = one lyric line), match each caption line to a
+    contiguous run of aligned words and use those real timings.
+
+    Falls back to even distribution if alignment/words are missing.
+    """
+    import re
+
+    def _tok(w):
+        return (w.get("text") or w.get("word") or "").strip()
+
+    real = [w for w in (words or []) if _tok(w)]
+    caps = [c for c in caption_lines if c.strip()]
+
+    if not real or not caps:
+        return build_srt_evenly(caps, audio_dur, out)
+
+    def _norm(s):
+        return re.sub(r"[^a-z0-9']+", " ", s.lower()).strip().split()
+
+    lines_srt = []
+    idx = 0  # pointer into real[]
+    slot_starts = []  # for post-process: extend end to next start
+    for i, line in enumerate(caps):
+        target_words = _norm(line)
+        if not target_words:
+            slot_starts.append(None)
+            continue
+        # Find the FIRST word of this line at or after idx.
+        # This anchors each caption at its actual sung start.
+        first = target_words[0]
+        anchor = None
+        for j in range(idx, len(real)):
+            tok = re.sub(r"[^a-z0-9']+", "", _tok(real[j]).lower())
+            if tok == first:
+                anchor = j
+                break
+        if anchor is None:
+            # Line not found ahead — fall back to proportional slot
+            per = audio_dur / len(caps)
+            start = i * per
+            end = (i + 1) * per
+            lines_srt.append((start, end, line))
+            slot_starts.append(start)
+            continue
+
+        # From anchor, greedily match consecutive words in target_words
+        matched = 0
+        j = anchor
+        while j < len(real) and matched < len(target_words):
+            tok = re.sub(r"[^a-z0-9']+", "", _tok(real[j]).lower())
+            if tok == target_words[matched]:
+                matched += 1
+            j += 1
+        start = real[anchor]["start"]
+        end_word_idx = max(anchor, j - 1)
+        end = real[min(end_word_idx, len(real) - 1)]["end"]
+        idx = j  # advance for next line so repeated lyrics get later timings
+        lines_srt.append((start, end, line))
+        slot_starts.append(start)
+
+    # Clamp each end to the NEXT line's start so captions don't overlap or
+    # stretch past when the next line starts singing.
+    fixed = []
+    for i, entry in enumerate(lines_srt):
+        start, end, line = entry
+        next_start = None
+        for k in range(i + 1, len(lines_srt)):
+            next_start = lines_srt[k][0]
+            break
+        if next_start is not None and end > next_start:
+            end = max(start + 0.5, next_start - 0.05)
+        # Also cap at audio_dur
+        end = min(end, audio_dur)
+        fixed.append((start, end, line))
+
+    out.write_text(
+        "\n".join(
+            f"{i+1}\n{_fmt(s)} --> {_fmt(e)}\n{l}\n"
+            for i, (s, e, l) in enumerate(fixed)
+        ),
+        encoding="utf-8",
+    )
+    return out
+
 
 
 def _caption_style() -> str:

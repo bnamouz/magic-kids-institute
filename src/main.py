@@ -97,7 +97,20 @@ def run_song(run_dir: Path) -> None:
         )
         dur = float(r.stdout.strip())
 
-        srt = compose.build_srt_evenly(plan["captions"], dur, run_dir / "captions.srt")
+        # Force-align sung audio to lyrics so captions match the singing
+        aligned_words = []
+        try:
+            # Strip section tags like [Verse 1], [Chorus] for alignment
+            import re as _re
+            spoken = _re.sub(r"\[[^\]]+\]", "", plan["lyrics"]).strip()
+            aligned_words = voice.force_align(song_mp3, spoken)
+            print(f"[4b/6] song alignment: {len(aligned_words)} timings")
+        except Exception as ae:
+            print(f"[4b/6] song alignment failed (fallback to even): {ae}")
+
+        srt = compose.build_srt_song_synced(
+            aligned_words, plan["captions"], dur, run_dir / "captions.srt"
+        )
         final = compose.compose_song(clips, song_mp3, srt, run_dir / "final.mp4")
         db.update_video(video_id, status="rendered")
         print(f"[5/6] composed: {final}")
