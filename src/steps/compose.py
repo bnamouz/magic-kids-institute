@@ -42,16 +42,65 @@ def _fmt(t: float) -> str:
 
 
 def build_srt_from_alignment(words: list[dict], chunks: list[str], out: Path) -> Path:
-    """Fact captions from forced alignment."""
-    lines, wi = [], 0
-    for idx, chunk in enumerate(chunks, 1):
-        need = len(chunk.split())
-        window = words[wi: wi + need]
-        if not window:
-            break
-        start = window[0]["start"]; end = window[-1]["end"]
-        lines.append(f"{idx}\n{_fmt(start)} --> {_fmt(end)}\n{chunk}\n")
-        wi += need
+    """Fact captions from forced alignment.
+
+    Ignores the plan's caption text (which may paraphrase the narration).
+    Instead, chunks the ACTUAL narration words into ~6-word segments, using
+    real timings from force_align so captions perfectly match speech.
+    """
+    if not words:
+        out.write_text("", encoding="utf-8")
+        return out
+
+    # ElevenLabs alignment returns {text, start, end} where text may be a word,
+    # punctuation, or whitespace. Filter to real words and merge.
+    def _tok(w):
+        return (w.get("text") or w.get("word") or "").strip()
+
+    real = [w for w in words if _tok(w)]
+    if not real:
+        out.write_text("", encoding="utf-8")
+        return out
+
+    # Chunk into caption windows of ~6 words each, breaking on punctuation.
+    MAX_WORDS = 7
+    BREAK_CHARS = ".!?,"
+    windows = []
+    cur = []
+    for w in real:
+        tok = _tok(w)
+        # Attach punctuation tokens to previous window without incrementing count
+        if tok in BREAK_CHARS + ";:" and cur:
+            cur.append(w)
+            windows.append(cur)
+            cur = []
+            continue
+        cur.append(w)
+        ends_at_punct = tok[-1] in BREAK_CHARS
+        real_word_count = sum(1 for x in cur if _tok(x) not in BREAK_CHARS + ";:")
+        if real_word_count >= MAX_WORDS or (ends_at_punct and real_word_count >= 3):
+            windows.append(cur)
+            cur = []
+    if cur:
+        windows.append(cur)
+
+    lines = []
+    for idx, window in enumerate(windows, 1):
+        start = window[0]["start"]
+        end = window[-1]["end"]
+        # Reconstruct text: space between words, no space before punctuation
+        parts = []
+        for w in window:
+            tok = _tok(w)
+            if not tok:
+                continue
+            if tok in BREAK_CHARS + ";:" and parts:
+                parts[-1] = parts[-1] + tok
+            else:
+                parts.append(tok)
+        text = " ".join(parts).strip()
+        lines.append(f"{idx}\n{_fmt(start)} --> {_fmt(end)}\n{text}\n")
+
     out.write_text("\n".join(lines), encoding="utf-8")
     return out
 
@@ -80,37 +129,52 @@ def compose_fact(
     voice_mp3: Path,
     captions_srt: Path,
     out: Path,
+    max_duration: float = 55.0,
 ) -> Path:
     tmp_video = out.parent / "video_only.mp4"
     _concat_scenes(scene_clips, tmp_video)
 
+    def _dur(p: Path) -> float:
+        r = subprocess.run(
+            ["ffprobe", "-v", "error", "-show_entries", "format=duration",
+             "-of", "default=noprint_wrappers=1:nokey=1", str(p)],
+            capture_output=True, text=True, check=True,
+        )
+        return float(r.stdout.strip())
+
+    voice_dur = _dur(voice_mp3)
+    target = min(max_duration, voice_dur)
+
     music_files = list(MUSIC_DIR.glob("*.mp3"))
     music = random.choice(music_files) if music_files else None
     vf = f"subtitles='{captions_srt.as_posix()}':force_style='{_caption_style()}'"
+    fade_start = max(0.0, target - 2.0)
 
     if music:
         _run([
             "ffmpeg", "-y",
             "-i", str(tmp_video), "-i", str(voice_mp3), "-i", str(music),
             "-filter_complex",
-            f"[0:v]{vf}[v];"
-            "[1:a]volume=1.0[a1];"
-            "[2:a]volume=0.10,afade=t=in:st=0:d=1,afade=t=out:st=52:d=3[a2];"
+            f"[0:v]{vf},trim=duration={target},setpts=PTS-STARTPTS[v];"
+            f"[1:a]atrim=duration={target},asetpts=PTS-STARTPTS,volume=1.0,afade=t=out:st={fade_start}:d=2[a1];"
+            f"[2:a]atrim=duration={target},asetpts=PTS-STARTPTS,volume=0.10,afade=t=in:st=0:d=1,afade=t=out:st={fade_start}:d=2[a2];"
             "[a1][a2]amix=inputs=2:duration=first:dropout_transition=0[a]",
             "-map", "[v]", "-map", "[a]",
             "-c:v", "libx264", "-preset", "medium", "-crf", "19",
             "-c:a", "aac", "-b:a", "192k",
-            "-shortest", "-movflags", "+faststart", str(out),
+            "-movflags", "+faststart", str(out),
         ])
     else:
         _run([
             "ffmpeg", "-y",
             "-i", str(tmp_video), "-i", str(voice_mp3),
-            "-filter_complex", f"[0:v]{vf}[v]",
-            "-map", "[v]", "-map", "1:a",
+            "-filter_complex",
+            f"[0:v]{vf},trim=duration={target},setpts=PTS-STARTPTS[v];"
+            f"[1:a]atrim=duration={target},asetpts=PTS-STARTPTS,afade=t=out:st={fade_start}:d=2[a]",
+            "-map", "[v]", "-map", "[a]",
             "-c:v", "libx264", "-preset", "medium", "-crf", "19",
             "-c:a", "aac", "-b:a", "192k",
-            "-shortest", "-movflags", "+faststart", str(out),
+            "-movflags", "+faststart", str(out),
         ])
     return out
 
@@ -120,18 +184,53 @@ def compose_song(
     song_mp3: Path,
     captions_srt: Path,
     out: Path,
+    max_duration: float = 55.0,
 ) -> Path:
-    """Sung song: single audio track, karaoke-style captions."""
+    """Sung song: single audio track, karaoke-style captions.
+
+    Loops video clips to cover the audio duration so the song never gets
+    cut short by -shortest. Trims final output to max_duration (< 60s Shorts).
+    """
     tmp_video = out.parent / "video_only.mp4"
     _concat_scenes(scene_clips, tmp_video)
+
+    # Actual durations
+    def _dur(p: Path) -> float:
+        r = subprocess.run(
+            ["ffprobe", "-v", "error", "-show_entries", "format=duration",
+             "-of", "default=noprint_wrappers=1:nokey=1", str(p)],
+            capture_output=True, text=True, check=True,
+        )
+        return float(r.stdout.strip())
+
+    audio_dur = _dur(song_mp3)
+    video_dur = _dur(tmp_video)
+    target = min(max_duration, audio_dur)
+
+    # If video shorter than target, loop it
+    if video_dur < target:
+        looped = out.parent / "video_looped.mp4"
+        loops_needed = int(target / video_dur) + 1
+        lst = out.parent / "loop.txt"
+        lst.write_text("\n".join(f"file '{tmp_video}'" for _ in range(loops_needed)))
+        _run([
+            "ffmpeg", "-y", "-f", "concat", "-safe", "0",
+            "-i", str(lst), "-c", "copy", str(looped),
+        ])
+        tmp_video = looped
+
     vf = f"subtitles='{captions_srt.as_posix()}':force_style='{_caption_style()}'"
+    # Add fade-out on audio in last 2 seconds so song ends cleanly at cut
+    fade_start = max(0.0, target - 2.0)
     _run([
         "ffmpeg", "-y",
         "-i", str(tmp_video), "-i", str(song_mp3),
-        "-filter_complex", f"[0:v]{vf}[v]",
-        "-map", "[v]", "-map", "1:a",
+        "-filter_complex",
+        f"[0:v]{vf},trim=duration={target},setpts=PTS-STARTPTS[v];"
+        f"[1:a]atrim=duration={target},asetpts=PTS-STARTPTS,afade=t=out:st={fade_start}:d=2[a]",
+        "-map", "[v]", "-map", "[a]",
         "-c:v", "libx264", "-preset", "medium", "-crf", "19",
         "-c:a", "aac", "-b:a", "192k",
-        "-shortest", "-movflags", "+faststart", str(out),
+        "-movflags", "+faststart", str(out),
     ])
     return out
