@@ -1,7 +1,6 @@
 """Step 6: upload the finished MP4 to YouTube as a Short.
 
-Marks every video as Made For Kids (COPPA compliant). Sets language
-(EN or AR) on the snippet so YouTube auto-suggests it in the right markets.
+Every video is Made For Kids (COPPA). English-only channel.
 """
 from __future__ import annotations
 from pathlib import Path
@@ -22,12 +21,14 @@ def _service():
     if not creds or not creds.valid:
         if creds and creds.expired and creds.refresh_token:
             creds.refresh(Request())
+            config.YT_TOKEN_FILE.write_text(creds.to_json())
         else:
+            # Local OAuth only; on Railway the token file must already exist.
             flow = InstalledAppFlow.from_client_secrets_file(
                 str(config.YT_CLIENT_SECRETS), SCOPES
             )
             creds = flow.run_local_server(port=8765)
-        config.YT_TOKEN_FILE.write_text(creds.to_json())
+            config.YT_TOKEN_FILE.write_text(creds.to_json())
     return build("youtube", "v3", credentials=creds)
 
 
@@ -36,43 +37,32 @@ def upload_short(
     title: str,
     description: str,
     hashtags: list[str],
-    language: str = "en",
 ) -> str:
     yt = _service()
     tags_line = " ".join(hashtags)
-
-    if language == "ar":
-        tagline = config.BRAND_TAGLINE_AR
-        follow = f"تابع {config.BRAND_HANDLE} لحقيقة سحرية جديدة كل يوم."
-    else:
-        tagline = config.BRAND_TAGLINE_EN
-        follow = f"Follow {config.BRAND_HANDLE} for a new magic fact every day."
-
+    follow = f"Follow {config.BRAND_HANDLE} for a new magic moment every day."
     full_desc = (
         f"{description}\n\n"
         f"{tags_line}\n\n"
-        f"✨ {config.BRAND_NAME} — {tagline}\n"
+        f"{config.BRAND_NAME} - {config.BRAND_TAGLINE}\n"
         f"{follow}"
     )
-
     body = {
         "snippet": {
             "title": title[:100],
             "description": full_desc[:5000],
             "tags": [t.lstrip("#") for t in hashtags][:15],
             "categoryId": config.YT_CATEGORY_ID,
-            "defaultLanguage": language,
-            "defaultAudioLanguage": language,
+            "defaultLanguage": "en",
+            "defaultAudioLanguage": "en",
         },
         "status": {
             "privacyStatus": config.YT_PRIVACY,
             "selfDeclaredMadeForKids": config.YT_MADE_FOR_KIDS,
         },
     }
-
     media = MediaFileUpload(str(video_path), chunksize=-1, resumable=True, mimetype="video/mp4")
     req = yt.videos().insert(part="snippet,status", body=body, media_body=media)
-
     resp = None
     while resp is None:
         _, resp = req.next_chunk()

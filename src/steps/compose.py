@@ -1,6 +1,6 @@
 """Step 5b: assemble scenes + voice + captions + music into the final 9:16 MP4.
 
-Handles Arabic captions with RTL rendering via libass (ffmpeg subtitles filter).
+Works for both facts (narration+bgmusic) and songs (sung audio only).
 """
 from __future__ import annotations
 from pathlib import Path
@@ -15,7 +15,6 @@ def _run(cmd: list[str]) -> None:
 
 
 def _concat_scenes(clips: list[Path], out: Path) -> Path:
-    """Trim each clip to 9:16 1080x1920 and concat."""
     parts = []
     for i, c in enumerate(clips):
         p = out.parent / f"norm_{i:02d}.mp4"
@@ -37,61 +36,62 @@ def _concat_scenes(clips: list[Path], out: Path) -> Path:
     return out
 
 
-def _build_srt(words: list[dict], chunks: list[str], out: Path) -> Path:
-    """Group word timings into caption chunks (2-5 words each)."""
-    def fmt(t: float) -> str:
-        h = int(t // 3600); m = int((t % 3600) // 60); s = t % 60
-        return f"{h:02d}:{m:02d}:{s:06.3f}".replace(".", ",")
+def _fmt(t: float) -> str:
+    h = int(t // 3600); m = int((t % 3600) // 60); s = t % 60
+    return f"{h:02d}:{m:02d}:{s:06.3f}".replace(".", ",")
 
+
+def build_srt_from_alignment(words: list[dict], chunks: list[str], out: Path) -> Path:
+    """Fact captions from forced alignment."""
     lines, wi = [], 0
     for idx, chunk in enumerate(chunks, 1):
         need = len(chunk.split())
         window = words[wi: wi + need]
         if not window:
             break
-        start = window[0]["start"]
-        end = window[-1]["end"]
-        lines.append(f"{idx}\n{fmt(start)} --> {fmt(end)}\n{chunk}\n")
+        start = window[0]["start"]; end = window[-1]["end"]
+        lines.append(f"{idx}\n{_fmt(start)} --> {_fmt(end)}\n{chunk}\n")
         wi += need
     out.write_text("\n".join(lines), encoding="utf-8")
     return out
 
 
-def compose(
+def build_srt_evenly(captions: list[str], audio_dur: float, out: Path) -> Path:
+    """Song captions distributed evenly across the sung audio."""
+    caps = [c for c in captions if c.strip()]
+    per = audio_dur / len(caps)
+    lines = []
+    for i, c in enumerate(caps):
+        lines.append(f"{i+1}\n{_fmt(i*per)} --> {_fmt((i+1)*per)}\n{c}\n")
+    out.write_text("\n".join(lines), encoding="utf-8")
+    return out
+
+
+def _caption_style() -> str:
+    return (
+        "FontName=Baloo 2,FontSize=22,PrimaryColour=&H00FFFFFF,"
+        "OutlineColour=&HFF5B7B,BorderStyle=1,Outline=3,Shadow=1,"
+        "Alignment=2,MarginV=200"
+    )
+
+
+def compose_fact(
     scene_clips: list[Path],
     voice_mp3: Path,
     captions_srt: Path,
     out: Path,
-    language: str = "en",
 ) -> Path:
     tmp_video = out.parent / "video_only.mp4"
     _concat_scenes(scene_clips, tmp_video)
 
     music_files = list(MUSIC_DIR.glob("*.mp3"))
     music = random.choice(music_files) if music_files else None
-
-    # Pick font by language
-    font_path = (
-        config.CAPTION_FONT_AR if language == "ar" else config.CAPTION_FONT_EN
-    ).as_posix()
-
-    # Bright kid-friendly caption style, purple outline
-    style = (
-        f"FontName={'Cairo' if language == 'ar' else 'Baloo 2'},"
-        "FontSize=20,PrimaryColour=&H00FFFFFF,"
-        "OutlineColour=&HFF5B7B,BorderStyle=1,Outline=3,Shadow=1,"
-        "Alignment=2,MarginV=200"
-    )
-    vf = (
-        f"subtitles='{captions_srt.as_posix()}':force_style='{style}'"
-    )
+    vf = f"subtitles='{captions_srt.as_posix()}':force_style='{_caption_style()}'"
 
     if music:
         _run([
             "ffmpeg", "-y",
-            "-i", str(tmp_video),
-            "-i", str(voice_mp3),
-            "-i", str(music),
+            "-i", str(tmp_video), "-i", str(voice_mp3), "-i", str(music),
             "-filter_complex",
             f"[0:v]{vf}[v];"
             "[1:a]volume=1.0[a1];"
@@ -100,21 +100,38 @@ def compose(
             "-map", "[v]", "-map", "[a]",
             "-c:v", "libx264", "-preset", "medium", "-crf", "19",
             "-c:a", "aac", "-b:a", "192k",
-            "-shortest", "-movflags", "+faststart",
-            str(out),
+            "-shortest", "-movflags", "+faststart", str(out),
         ])
     else:
-        # No music yet — just voice + captions
         _run([
             "ffmpeg", "-y",
-            "-i", str(tmp_video),
-            "-i", str(voice_mp3),
-            "-filter_complex",
-            f"[0:v]{vf}[v]",
+            "-i", str(tmp_video), "-i", str(voice_mp3),
+            "-filter_complex", f"[0:v]{vf}[v]",
             "-map", "[v]", "-map", "1:a",
             "-c:v", "libx264", "-preset", "medium", "-crf", "19",
             "-c:a", "aac", "-b:a", "192k",
-            "-shortest", "-movflags", "+faststart",
-            str(out),
+            "-shortest", "-movflags", "+faststart", str(out),
         ])
+    return out
+
+
+def compose_song(
+    scene_clips: list[Path],
+    song_mp3: Path,
+    captions_srt: Path,
+    out: Path,
+) -> Path:
+    """Sung song: single audio track, karaoke-style captions."""
+    tmp_video = out.parent / "video_only.mp4"
+    _concat_scenes(scene_clips, tmp_video)
+    vf = f"subtitles='{captions_srt.as_posix()}':force_style='{_caption_style()}'"
+    _run([
+        "ffmpeg", "-y",
+        "-i", str(tmp_video), "-i", str(song_mp3),
+        "-filter_complex", f"[0:v]{vf}[v]",
+        "-map", "[v]", "-map", "1:a",
+        "-c:v", "libx264", "-preset", "medium", "-crf", "19",
+        "-c:a", "aac", "-b:a", "192k",
+        "-shortest", "-movflags", "+faststart", str(out),
+    ])
     return out

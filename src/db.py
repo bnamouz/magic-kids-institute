@@ -1,27 +1,4 @@
-"""Supabase client + schema helpers.
-
-Tables (create via `docs/SETUP.md`):
-
-    topics (
-        id           uuid primary key default gen_random_uuid(),
-        title        text not null,
-        angle        text,
-        used_at      timestamptz,
-        created_at   timestamptz default now()
-    )
-
-    videos (
-        id             uuid primary key default gen_random_uuid(),
-        topic_id       uuid references topics(id),
-        youtube_id     text,
-        title          text,
-        description    text,
-        status         text,           -- draft | rendered | uploaded | failed
-        error          text,
-        cost_usd       numeric,
-        created_at     timestamptz default now()
-    )
-"""
+"""Supabase client + schema helpers."""
 from supabase import create_client, Client
 from . import config
 
@@ -30,19 +7,20 @@ def client() -> Client:
     return create_client(config.SUPABASE_URL, config.SUPABASE_KEY)
 
 
-def next_topic() -> dict:
-    """Pick the oldest unused topic."""
+def next_topic(content_type: str) -> dict:
+    """Pick the oldest unused topic for the given content_type ('fact' or 'song')."""
     sb = client()
     r = (
         sb.table("topics")
         .select("*")
+        .eq("content_type", content_type)
         .is_("used_at", "null")
         .order("created_at")
         .limit(1)
         .execute()
     )
     if not r.data:
-        raise RuntimeError("Topic queue empty — run `python -m src.seed_topics`.")
+        raise RuntimeError(f"No unused {content_type} topics.")
     return r.data[0]
 
 
