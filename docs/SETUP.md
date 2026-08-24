@@ -1,108 +1,105 @@
-# Setup — CurioDrop AI (≈25 minutes end-to-end)
+# Magic Kids Institute — Setup Guide (step-by-step)
 
-You'll do this once. After that, one video ships every morning at 07:00 UTC (10:00 שעון ישראל) with zero clicks.
+You'll finish with a fully automated YouTube Kids Shorts channel that publishes
+one English video in the morning and one Arabic video in the evening — every
+day, without touching it.
 
-## 1. Create the YouTube channel (3 min)
+## Step 1 — Create a dedicated Google account (5 min)
 
-1. Sign into any Google account (or create a fresh one dedicated to the channel — recommended).
-2. Go to **[youtube.com/create_channel](https://www.youtube.com/create_channel)** and create a new channel.
-3. Open **YouTube Studio → Customization → Basic Info**, and set the handle to **`@CurioDropAI`**.
-   - Fallbacks if you decide otherwise later: `@WonderDropAI`, `@MicroMindDaily`, `@CuriousDropDaily`.
-4. Upload a channel logo (a stylized water-drop with a brain silhouette — I've included a Canva template link in `docs/BRAND.md`).
-5. Description:
-   > CurioDrop is your one-minute mind-drop — a fresh piece of wonder every morning. Follow along for the strangest, sweetest, most delightful facts in the universe.
+Do NOT use your personal Gmail — you want this channel isolated.
 
-## 2. Enable the YouTube Data API (5 min)
+1. Open [accounts.google.com/signup](https://accounts.google.com/signup) in Chrome incognito.
+2. Suggested email: `magickidsinstitute@gmail.com`
+3. Save the password in your password manager.
+4. Stay signed in.
 
-1. Open **[console.cloud.google.com](https://console.cloud.google.com)** in the SAME Google account that owns the channel.
-2. Create a project called `curio-drop`.
-3. **APIs & Services → Library →** enable **YouTube Data API v3**.
-4. **APIs & Services → OAuth consent screen →** External → fill required fields → add scope `https://www.googleapis.com/auth/youtube.upload` → add your own email as a **test user**.
-5. **APIs & Services → Credentials →** Create Credentials → **OAuth client ID** → Desktop app → download JSON as `youtube_client_secret.json` and put it in the project root.
-6. Run once locally: `python -m src.main` — a browser will open and finish OAuth, then save `youtube_token.json`. Keep that file safe; Railway will use it too.
+## Step 2 — Create the YouTube channel with the right settings (5 min)
 
-## 3. Supabase project (3 min)
+1. Open [youtube.com](https://youtube.com) while signed in as the new Google account.
+2. Click your avatar → **Create a channel**.
+3. Channel name: `Magic Kids Institute`
+4. Handle: `@MagicKidsInstitute` (already verified free)
+5. Upload avatar: [`magickids_avatar.png`](../assets/magickids_avatar.png)
+6. Upload banner: [`magickids_banner.png`](../assets/magickids_banner.png)
+7. In **YouTube Studio → Settings → Channel → Advanced settings**, set:
+   - **Audience: "Yes, set this channel as made for kids"**  ← required
+   - This disables comments, personalized ads, notifications, and stories on every video
 
-1. In your existing Supabase account create a project `curio-drop`.
-2. SQL editor → run:
+## Step 3 — Enable the YouTube Data API v3 (5 min)
 
-    ```sql
-    create table topics (
-      id uuid primary key default gen_random_uuid(),
-      title text not null,
-      angle text,
-      used_at timestamptz,
-      created_at timestamptz default now()
-    );
-    create table videos (
-      id uuid primary key default gen_random_uuid(),
-      topic_id uuid references topics(id),
-      youtube_id text,
-      title text,
-      description text,
-      status text,
-      error text,
-      cost_usd numeric,
-      created_at timestamptz default now()
-    );
-    ```
+1. Go to [console.cloud.google.com](https://console.cloud.google.com) with the same Google account.
+2. Create a new project: `MagicKidsInstitute`
+3. In the search bar type "YouTube Data API v3" → **Enable**.
+4. Go to **APIs & Services → OAuth consent screen**:
+   - User type: **External**
+   - App name: `Magic Kids Institute Uploader`
+   - Support email: your email
+   - Save → Publish app
+5. Go to **APIs & Services → Credentials**:
+   - **Create Credentials → OAuth client ID → Desktop app**
+   - Download the JSON file
+   - Rename it to `youtube_client_secret.json`
+   - Save it inside the project folder (root, next to `README.md`)
 
-3. Copy the **Project URL** and **service_role** key into `.env`.
+## Step 4 — Gather API keys (10 min)
 
-## 4. Third-party API keys (5 min)
+Get each of these keys and paste them into a new file called `.env` (copy `.env.example`):
 
-| Service        | Where                                                              | Free tier?               |
-| -------------- | ------------------------------------------------------------------ | ------------------------ |
-| OpenAI         | [platform.openai.com/api-keys](https://platform.openai.com/api-keys) | Pay-as-you-go, $5 covers ~500 videos |
-| fal.ai         | [fal.ai/dashboard/keys](https://fal.ai/dashboard/keys)               | $5 free credit           |
-| ElevenLabs     | [elevenlabs.io/app/settings/api-keys](https://elevenlabs.io/app/settings/api-keys) | 10k chars/month free |
+| Key | Where to get it | Note |
+|---|---|---|
+| `OPENAI_API_KEY` | [platform.openai.com/api-keys](https://platform.openai.com/api-keys) | ~$0.05/video |
+| `FAL_API_KEY` | [fal.ai/dashboard/keys](https://fal.ai/dashboard/keys) | ~$0.40/video |
+| `ELEVENLABS_API_KEY` | [elevenlabs.io/app/settings/api-keys](https://elevenlabs.io/app/settings/api-keys) | Starter plan $5/mo covers 60+ videos |
+| `SUPABASE_URL` | Already set: `https://imtpxkbimtolhvlyynvx.supabase.co` | |
+| `SUPABASE_SERVICE_ROLE_KEY` | Supabase project → Settings → API → `service_role` (secret) | |
 
-Paste them into `.env`.
-
-## 5. Seed the topic queue (1 min)
+## Step 5 — Test locally (10 min)
 
 ```bash
-python -m src.seed_topics
+cd magic-kids-institute
+pip install -r requirements.txt
+
+# First run — will prompt YouTube OAuth in your browser
+RUN_LANGUAGE=en YT_PRIVACY=unlisted python -m src.main
 ```
 
-Or, better: use the 200-topic list in `prompts/topic_ideas.txt`.
+This should:
+1. Print `[0/6] language: en`
+2. Pick a topic like "Why do bees dance?"
+3. Write a script, render 6-8 cartoon clips
+4. Generate voice, compose the final MP4
+5. Open a browser window asking you to authorize YouTube upload — approve it
+6. Upload the video as **unlisted**
 
-## 6. Dry-run locally (5 min)
+Watch the unlisted video. If it looks good, run once more with `RUN_LANGUAGE=ar` to test the Arabic pipeline.
 
-```bash
-python -m src.main
-```
+## Step 6 — Deploy to Railway with a daily cron (10 min)
 
-The first run will:
+1. Go to [railway.app](https://railway.app) → **New Project → Deploy from GitHub**.
+2. Pick your `magic-kids-institute` repo.
+3. Set all environment variables from your `.env` file in Railway's variables panel.
+4. Also add:
+   - `YT_PRIVACY=public` (once you're confident)
+   - Upload `youtube_client_secret.json` and `youtube_token.json` as files (or paste their contents as env vars — see docs)
+5. Add **two cron jobs**:
+   - Name: `daily-en` — Schedule: `0 7 * * *` (07:00 UTC) — Command: `RUN_LANGUAGE=en python -m src.main`
+   - Name: `daily-ar` — Schedule: `0 15 * * *` (15:00 UTC) — Command: `RUN_LANGUAGE=ar python -m src.main`
 
-1. open your browser for YouTube OAuth,
-2. pop the topic queue,
-3. render `output/<today>/final.mp4`,
-4. upload it as **Unlisted** (`YT_PRIVACY=unlisted` in `.env`),
-5. print the URL. Watch it end-to-end before switching to public.
+That's it — you now have an English Short at 07:00 UTC (peak US morning) and
+an Arabic Short at 15:00 UTC (peak Middle East evening) every single day.
 
-Once you're happy → set `YT_PRIVACY=public`.
+## Step 7 — Monitor
 
-## 7. Deploy to Railway (5 min)
+- Supabase → Table Editor → `videos` — see every run's status
+- YouTube Studio → Content — see published videos
+- Railway → Deployments → Logs — see live pipeline output
 
-```bash
-cd curio-drop-ai
-git init && git add -A && git commit -m "curio-drop v1"
-railway login
-railway init          # new project: curio-drop
-railway link
-railway up            # deploys Dockerfile
-# Add env vars from .env in Railway → Variables
-# Upload youtube_client_secret.json and youtube_token.json as base64 secrets
-# or better: mount them as Railway secret files.
-```
+## Cost summary
 
-Railway reads `cronSchedule` from `railway.json` and runs the container every day at 07:00 UTC.
+- OpenAI: ~$0.05/video × 2/day × 30 = **$3/mo**
+- fal.ai: ~$0.40/video × 2/day × 30 = **$24/mo**
+- ElevenLabs Starter: **$5/mo**
+- Supabase free tier: **$0**
+- Railway hobby plan: **$5/mo**
 
-## 8. Watch it work
-
-- Every morning, check the `videos` table in Supabase — one new row per day.
-- If `status = 'failed'`, the error column tells you exactly which step blew up.
-- YouTube Studio → Analytics → Reach → filter by "First 24 hours" tells you which topics hook best; feed winners back into the queue.
-
-That's it — you're live.
+**Total ≈ $37/month for 60 kid-safe YouTube Shorts.**

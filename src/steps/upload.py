@@ -1,4 +1,8 @@
-"""Step 6: upload the finished MP4 to YouTube as a Short."""
+"""Step 6: upload the finished MP4 to YouTube as a Short.
+
+Marks every video as Made For Kids (COPPA compliant). Sets language
+(EN or AR) on the snippet so YouTube auto-suggests it in the right markets.
+"""
 from __future__ import annotations
 from pathlib import Path
 from google.oauth2.credentials import Credentials
@@ -27,14 +31,28 @@ def _service():
     return build("youtube", "v3", credentials=creds)
 
 
-def upload_short(video_path: Path, title: str, description: str, hashtags: list[str]) -> str:
+def upload_short(
+    video_path: Path,
+    title: str,
+    description: str,
+    hashtags: list[str],
+    language: str = "en",
+) -> str:
     yt = _service()
     tags_line = " ".join(hashtags)
+
+    if language == "ar":
+        tagline = config.BRAND_TAGLINE_AR
+        follow = f"تابع {config.BRAND_HANDLE} لحقيقة سحرية جديدة كل يوم."
+    else:
+        tagline = config.BRAND_TAGLINE_EN
+        follow = f"Follow {config.BRAND_HANDLE} for a new magic fact every day."
+
     full_desc = (
         f"{description}\n\n"
         f"{tags_line}\n\n"
-        f"🧠 CurioDrop — one tiny mind-drop a day.\n"
-        f"Follow @CurioDropAI for a new curiosity every morning."
+        f"✨ {config.BRAND_NAME} — {tagline}\n"
+        f"{follow}"
     )
 
     body = {
@@ -43,7 +61,8 @@ def upload_short(video_path: Path, title: str, description: str, hashtags: list[
             "description": full_desc[:5000],
             "tags": [t.lstrip("#") for t in hashtags][:15],
             "categoryId": config.YT_CATEGORY_ID,
-            "defaultLanguage": "en",
+            "defaultLanguage": language,
+            "defaultAudioLanguage": language,
         },
         "status": {
             "privacyStatus": config.YT_PRIVACY,

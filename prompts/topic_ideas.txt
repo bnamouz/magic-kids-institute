@@ -1,216 +1,232 @@
-# 200 evergreen curiosity seeds — one per line, "title | angle"
-# Import via `python -m src.seed_topics` after wiring the parser to read this file.
+Octopuses have three hearts and blue blood | underwater friend
+Bees can recognize your face | little helper
+Baby elephants suck their trunks like a thumb | cute animal
+Cows have best friends who miss them when apart | animal feelings
+Sea otters hold hands while sleeping | cute animal
+Butterflies taste flowers with their feet | silly body
+A group of flamingos is called a flamboyance | funny word
+A group of pandas is called an embarrassment | funny word
+A group of owls is called a parliament | funny word
+A group of crows is called a murmuration | funny word
+Baby giraffes are 6 feet tall the day they are born | big baby
+Baby kangaroos are as small as a jellybean | tiny baby
+Baby pandas are pink and smaller than a stick of butter | tiny baby
+Dolphins have names for each other | smart friend
+Elephants can recognize themselves in a mirror | smart friend
+Bees do a wiggle dance to tell friends where flowers are | smart friend
+Owls can turn their heads almost all the way around | wow body
+Chameleons can look in two different directions at once | wow body
+Sloths only come down from trees once a week | slow friend
+Cats spend most of the day taking naps | sleepy friend
+A hummingbird's tiny heart beats 1,200 times a minute | wow body
+Hummingbirds are the only birds who can fly backwards | flying friend
+Penguins give each other pebbles as a gift | cute animal
+Rabbits do happy little jumps called binkies | cute animal
+Cows have a nearly all-around view without moving their head | wow body
+Dogs can smell your feelings | smart friend
+Cats have three eyelids | wow body
+Baby dolphins are born with tiny whiskers | cute baby
+A cat's nose print is unique — like your fingerprint | cool fact
+Elephants say hello by touching trunks | cute animal
+Pigs can play video games — really | smart friend
+Ravens can solve puzzles a 5-year-old can't | smart friend
+Crows remember faces for years | smart friend
+Sea horses — the dads carry the babies | wow family
+Baby zebras are born with brown and white stripes | cute baby
+Koalas have fingerprints just like ours | wow body
+A blue whale's tongue weighs as much as an elephant | big animal
+A baby blue whale grows as much as a car every month | wow growth
+Frogs can drink water through their skin | silly body
+Turtles can live over 150 years | wow age
+Some turtles pull their whole body into their shell | wow body
+Sea otters use rocks as tools to open shells | smart friend
+Beavers build homes with pools, doors, and rooms | smart friend
+Ants can lift 50 times their own weight | tiny hero
+Ants have TWO stomachs — one to share food with friends | sharing friend
+Bees have five eyes | wow body
+Butterflies used to be caterpillars | big change
+A caterpillar has more muscles than a person | tiny hero
+Snails carry their homes on their backs | cute animal
+Bunnies can't burp | silly body
+Camels have three eyelids to keep out sand | wow body
+Some jellyfish glow in the dark | glowing friend
+Sea turtles cry tiny salty tears to stay healthy | wow body
+Baby giraffes can walk within an hour of being born | wow baby
+Peacocks fan out their tails like a giant rainbow | beautiful animal
+Puffins can flap their wings 400 times a minute | flying friend
+A hedgehog has 5,000 tiny spikes on its back | cool body
+Ladybug spots tell you how old they are | cool body
+Fireflies make their own light in their tummies | glowing friend
+Baby ducks follow the first thing they see when they hatch | cute baby
+Baby foxes are called kits — like tiny puzzle pieces | cute baby
+Otters have a favorite rock they keep in a little pocket | cute animal
+Wombats poop cube-shaped — really | silly body
+A single strand of spider web is stronger than steel | tiny hero
+A shrimp's heart is inside its head | silly body
+Slugs have four noses | silly body
+The sun is so big, one million Earths could fit inside | space wow
+A day on Venus is longer than its year | space wonder
+There's a planet made mostly of diamond | space wonder
+It rains sideways glass on one planet | space wonder
+The moon is slowly moving away from Earth | space wow
+A rainbow is a full circle — we only see half | sky magic
+Clouds can weigh as much as 100 elephants | sky magic
+A hurricane can spin faster than a racecar | sky magic
+Sometimes it rains at night with a moon rainbow | sky magic
+You can't burp in space — the bubbles don't rise | space silly
+Astronauts grow 5 cm taller in space | space wow
+There are more stars in the sky than grains of sand on Earth | space wow
+The universe smells a little bit like raspberries | space silly
+The moon has moonquakes, just like Earth has earthquakes | space wow
+On Mars, the sunset is BLUE, not orange | space wonder
+Space is completely silent — sound can't travel there | space wow
+Every snowflake is a totally unique 6-sided shape | sky magic
+Lightning is 5 times hotter than the surface of the sun | sky wow
+There are 8 million lightning flashes on Earth every day | sky wow
+A cloud can hold enough water to fill a swimming pool | sky magic
+Sunlight takes 8 minutes to reach us from the sun | space wow
+You can see the moon during the day | sky magic
+Some stars are so big, a million suns fit inside | space wow
+Astronauts sleep floating in tiny sleeping bags | space silly
+Every hour, the earth spins as fast as a jet plane | space wow
+A shooting star is really a tiny piece of space dust | sky magic
+The northern lights dance in the sky like ribbons of color | sky magic
+There's a huge storm on Jupiter that's bigger than Earth — and it's been going for 400 years | space wonder
+Your brain is more powerful than any computer on Earth | body wow
+Your heart beats 100,000 times every day | body wow
+Your body makes new skin every 4 weeks | body wow
+Your ears and nose never stop growing | body silly
+Babies are born with 300 bones — grownups have 206 | body wow
+Your fingerprints are totally unique — no one else has them | body wow
+Sneezes zoom out of your nose at 100 miles per hour | body silly
+Your tongue print is unique — like a fingerprint | body silly
+Your body has enough water to fill a small bucket | body wow
+You blink 20,000 times a day without thinking | body silly
+Your stomach makes new lining every 3 days | body wow
+Your left lung is smaller — to make room for your heart | body wow
+You breathe about 20,000 times every single day | body wow
+You have tiny helpers in your tummy that help you digest food | body wow
+Your bones are stronger than concrete | body wow
+The tiniest muscle in your body helps you hear | body wow
+Your brain uses as much energy as a light bulb | body wow
+You are about 1 cm taller in the morning than at night | body silly
+Kids grow the fastest while they sleep | body wow
+Your eyes can see 10 million colors | body wow
+Sunflowers turn their heads to follow the sun | plant magic
+Trees can talk to each other through their roots | plant magic
+The tallest tree in the world is taller than a 30-floor building | plant wow
+The oldest tree on Earth is over 4,800 years old | plant wow
+Some trees can live longer than 20 kids all lined up in age | plant wow
+Bananas are actually berries — but strawberries are not | plant silly
+Pineapples take 2 whole years to grow | plant wow
+A rainbow needs sun AND rain at the same time | sky magic
+Bamboo can grow as much as your finger in one hour | plant wow
+Some flowers only bloom for one single night | plant magic
+Watermelons are 92% water | plant silly
+Onions can make you cry because of a tiny secret gas | plant silly
+Peanuts aren't nuts — they grow underground like potatoes | plant silly
+The Amazon rainforest makes 20% of Earth's oxygen | plant wow
+Mushrooms are more closely related to us than to plants | nature wow
+Trees give us the oxygen we breathe | plant magic
+A single tree can drink 100 liters of water a day | plant wow
+Some plants eat tiny bugs to grow | plant wonder
+Rainbows can appear in waterfalls | sky magic
+A cactus can live 200 years in the desert | plant wow
+There are more stars in the sky than fish in the sea | ocean wow
+We have explored more of space than the deep ocean | ocean wow
+The ocean makes half of the oxygen we breathe | ocean wow
+Some fish can change colors like a rainbow | ocean magic
+Clownfish live in stinging homes that don't sting them | ocean magic
+Sea horses swim slowly and gently curl their tails together | ocean magic
+A blue whale's heart is as big as a small car | ocean wow
+A blue whale is louder than a jet plane | ocean wow
+Coral is actually a tiny living animal | ocean wow
+The ocean has a huge waterfall UNDER the water | ocean wonder
+Baby sea turtles find the sea by following the moon | ocean magic
+Some fish can walk on land for a short time | ocean wonder
+The seahorse dad is the one who carries the babies | ocean magic
+A pufferfish puffs up when it feels shy | ocean cute
+Some fish sleep with their eyes wide open | ocean silly
+Octopuses can taste with their arms | ocean silly
+There is a shrimp that shoots bubbles like a tiny popcorn machine | ocean silly
+There is a jellyfish that glows blue like the moon | ocean magic
+There's a place in Turkey older than the pyramids | world wow
+Iceland is growing bigger every year | world wow
+Antarctica is technically the biggest desert on Earth | world silly
+You can find gold in the ocean | world wow
+Australia is wider than the moon | world wow
+There are more chickens than people on Earth | world silly
+You can't hum with your nose closed | body silly
+A bolt of lightning has more energy than a whole city uses in a day | sky wow
+The Nile river is longer than 400 marathons | world wow
+There is a lake so salty you can float on top like a beach ball | world silly
+Some caves have their own weather inside | world wonder
+There's a place where the sun doesn't set for 6 months | world wonder
+Snowflakes are white but ice is clear | world silly
+Time zones mean somewhere in the world it's always tomorrow | world wow
+Every drop of rain has a tiny piece of dust inside it | sky wonder
+The world's biggest sandcastle was taller than a house | world silly
+Fingernails grow faster in summer | body silly
+You can't smell things while you sleep | body silly
+The word 'planet' means 'wanderer' in Greek | word magic
+The smell after rain has a name — petrichor | word magic
+Colors mix in the sky to make rainbows | sky magic
+Sound travels 4 times faster in water than in air | sound wow
+Bees can see colors that we can't see at all | sight wonder
+Butterflies see more colors than humans | sight wonder
+You have a blind spot in each eye — but your brain fills it in | body wow
+Whales sing songs that other whales hear across the ocean | ocean magic
+A dolphin's whistle is like a name only its friends know | ocean magic
+Fireflies talk to each other with blinking patterns | cute friend
+Cats purr at a frequency that helps their bones heal | animal magic
+You can hear the ocean inside a shell — but it's really air | sound silly
+Honey never goes bad — jars 3,000 years old are still good | food wow
+Chocolate used to be money | food silly
+Popcorn pops because a tiny water drop inside gets hot | food wow
+Cheese is milk that has been aged like a slow secret | food wow
+The world's biggest pizza was as big as a football field | food silly
+Ice cream was invented over 2,000 years ago | food wow
+Bananas glow blue under a special purple light | food magic
+Apples float in water because 25% of them is air | food silly
+Carrots used to be purple, not orange | food silly
+Marshmallows started as a real plant | food silly
+Smiling actually makes your brain feel happier | feeling magic
+Laughing is contagious — one laugh starts a whole room | feeling magic
+Hugs release a magic chemical in your brain called oxytocin | feeling magic
+Petting a dog lowers your heartbeat and helps you feel calm | feeling magic
+Music can help plants grow | wow music
+Singing makes your brain release happy chemicals | feeling magic
+Kids laugh about 300 times a day — grownups only 15 | feeling silly
+A tiny smile can make a stranger's day better | feeling magic
+Bubble wrap was invented as wallpaper | invention silly
+Play-Doh started as a wall cleaner | invention silly
+The first crayons came in only 8 colors | invention wow
+Popsicles were invented by an 11-year-old kid | kid inventor
+Earmuffs were invented by a 15-year-old kid | kid inventor
+Trampolines were invented by a teenager | kid inventor
+The word 'robot' is only 100 years old | invention wow
+Airplanes fly because of the shape of their wings | how it works
+Ice cubes float because ice is lighter than water | how it works
+A boomerang comes back because of how it spins in the air | how it works
+A magnifying glass can start a fire with sunlight | how it works
+Rubber came from tree sap | how it works
+Velcro was invented after a walk with a dog | invention story
+The chocolate chip cookie was invented by accident | invention story
+Slinky was invented by accident when a spring fell off a shelf | invention story
+Some dinosaurs had feathers, like giant birds | dino wow
+Chickens are the closest living relative of the T-Rex | dino wow
+A T-Rex tooth was as big as a banana | dino wow
+Some dinosaurs were as small as a chicken | dino silly
+The word 'dinosaur' means 'terrible lizard' in Greek | dino wow
+Dinosaurs lived so long ago that grass didn't even exist yet | dino wow
+Some dinosaurs swallowed rocks to help digest food | dino silly
+Your brain never sleeps — even when you do | body wow
+Everyone dreams — even if you don't remember | body wow
+Fish sleep with their eyes open | animal silly
+Sharks have to keep moving even while sleeping | animal wow
+Dolphins sleep with half their brain at a time | ocean magic
+Giraffes only sleep about 30 minutes a day | animal wow
+Cows can sleep standing up | animal silly
+Snails can sleep for 3 years in a row | animal silly
 
-Octopuses have three hearts and blue blood | biology surprise
-Honey never spoils — 3000-year-old jars are still edible | chemistry twist
-Bananas are berries but strawberries aren't | botanical mixup
-A day on Venus is longer than a year on Venus | space paradox
-Sharks are older than trees | deep-time perspective
-Wombats poop cubes and scientists just figured out how | animal weirdness
-Your stomach lining replaces itself every 4 days | body fact
-The Eiffel Tower grows 15 cm taller in summer | physics of heat
-Cows have best friends and get stressed apart | animal emotion
-There are more chess positions than atoms in the universe | math awe
-Astronauts grow up to 5 cm taller in space | zero-g biology
-Butterflies taste with their feet | sensory oddity
-Sloths hold their breath longer than dolphins | record-breaker
-The Sahara used to be a lush green savanna | climate history
-A group of flamingos is called a flamboyance | language delight
-Some turtles can breathe through their butts | gross-but-true
-The dot on a lowercase i is called a tittle | linguistic gem
-Snails can sleep for three years straight | extreme rest
-Water can boil and freeze at the same time | triple point
-Your brain uses 20% of your daily energy | body fact
-Bees can recognize human faces | animal intelligence
-A cloud can weigh over a million pounds | atmospheric science
-Sea otters hold hands while sleeping so they don't drift apart | animal emotion
-There is a planet made mostly of diamond | space wonder
-Bananas share about 60% of our DNA | genetic surprise
-The Moon has moonquakes | lunar geology
-A single teaspoon of neutron star weighs 6 billion tons | space extreme
-Ants never sleep in the traditional sense | insect biology
-Dolphins have names for each other | animal communication
-Your fingernails grow faster on your dominant hand | body quirk
-Trees can talk to each other through fungal networks | mycology
-The longest word in English has 189,819 letters | language extreme
-Cats can't taste sweetness | evolutionary quirk
-Bubble wrap was invented as wallpaper | invention origin
-Tigers have striped skin — not just fur | zoology surprise
-A shrimp's heart is in its head | anatomy oddity
-Some frogs can freeze and come back to life | animal survival
-The world's quietest room is in Minneapolis | acoustic wonder
-Owls can rotate their heads 270 degrees | anatomy explained
-The Great Wall of China is not visible from space | myth-busting
-A duck's quack does echo | myth-busting
-Hummingbirds are the only birds that can fly backward | flight biology
-Iceland grows about 5 cm wider every year | plate tectonics
-Bees do a "waggle dance" to give directions | animal intelligence
-The Pacific Ocean is shrinking about 3 cm a year | plate tectonics
-A blue whale's tongue weighs as much as an elephant | scale surprise
-Cleopatra lived closer in time to the iPhone than to the pyramids | history perspective
-Vikings never actually wore horned helmets | myth-busting
-Sunflowers face the sun by "sleeping" at night | plant biology
-The Statue of Liberty was originally copper-colored | history
-Rats laugh when tickled — but only at ultrasonic frequencies | animal emotion
-A newborn kangaroo is the size of a jellybean | biology extreme
-Peanuts are legumes, not nuts | botanical mixup
-The world's oldest tree is over 4,800 years old | deep time
-A group of crows is called a murder | language delight
-Elephants can recognize themselves in mirrors | animal intelligence
-Your skeleton replaces itself every 10 years | body fact
-The Nile flowed east to west 30 million years ago | geology
-There are lakes underneath Antarctica | earth science
-Camels have three eyelids | anatomy
-Slugs have four noses | anatomy oddity
-There is a species of jellyfish that is biologically immortal | biology extreme
-The average human sheds 40 pounds of skin in a lifetime | body fact
-Koalas have fingerprints nearly identical to humans | primate mystery
-Pineapples take about two years to grow | botany
-Chocolate was once used as currency by the Aztecs | history
-The Coca-Cola formula is kept in a vault in Atlanta | trivia
-Antarctica is the largest desert on Earth | myth-busting
-A jiffy is an actual unit of time — 1/100 of a second | language delight
-Wombats' backsides are cartilage — used as a shield | animal defense
-Giraffes only sleep about 30 minutes a day | animal biology
-Your ears and nose keep growing for your entire life | body fact
-Water expands when it freezes — most substances contract | chemistry
-Mount Everest grows about 4 mm every year | geology
-Bees can smell fear pheromones | animal intelligence
-Sea horses mate for life and males give birth | animal biology
-There is enough gold in the ocean for every person to have 9 pounds | geology
-Bananas glow blue under ultraviolet light | chemistry
-Some spiders can survive underwater by trapping air | animal survival
-Sound travels 4× faster in water than in air | physics
-The oldest known joke is 3,900 years old | history
-Cats' purring frequency can help heal bones | animal biology
-A hummingbird's heart beats over 1,200 times per minute | animal biology
-Baby elephants suck their trunks for comfort | animal emotion
-There are more stars than grains of sand on Earth | space scale
-A shrimp can snap its claw so fast it creates a sonoluminescent bubble | physics
-Ravens can plan for the future | animal intelligence
-Antarctic ice can be over 4 km thick | geology
-Bananas are radioactive — barely | chemistry surprise
-The smell after rain has a name — petrichor | language delight
-Some parrots outlive their owners | animal biology
-The tongue is the strongest muscle relative to size | body fact
-Bees have five eyes | anatomy
-Cows produce more milk when they listen to soft music | animal behavior
-The word "planet" comes from Greek for "wanderer" | language history
-Baby giraffes fall 6 feet at birth — and are fine | animal biology
-Coconuts kill more people per year than sharks | statistics
-Bacteria outnumber your own cells 10 to 1 | body microbiome
-There are 8 million lightning strikes on Earth every day | atmospheric science
-Termite queens live up to 50 years | animal biology
-You can hear the Northern Lights on quiet nights | atmospheric science
-Whales can sing songs that travel thousands of miles underwater | ocean acoustics
-A group of pandas is called an embarrassment | language delight
-Butterflies remember being caterpillars | biology surprise
-Some frogs use their eyeballs to help swallow | anatomy oddity
-Sharks predate the rings of Saturn | deep time
-The Amazon river was longer than the Nile 10 million years ago | geology
-Bees see ultraviolet patterns on flowers we can't | animal senses
-Cats spend 70% of their lives sleeping | animal biology
-The tallest waterfall on Earth is 3,212 feet | geography
-A caterpillar has more muscles than a human | anatomy
-There are octopuses with detachable arms as decoys | animal defense
-Toothpaste tubes used to be made of lead | history
-Newborn babies don't have kneecaps | body fact
-Some frogs are transparent | animal biology
-The world's deepest hole is only 12 km deep | geology
-A single strand of spider silk is stronger than steel | material science
-Elephants are afraid of bees | animal behavior
-The Sun is 400 times bigger than the Moon and 400 times farther | astronomy coincidence
-Sound cannot travel through outer space | physics
-There is a "corpse flower" that smells like rotting meat | plant biology
-A shrimp's brain is smaller than a grain of sand | anatomy
-Vending machines kill more people per year than sharks | statistics
-Alaska has more coastline than the rest of the US combined | geography
-Peanut butter can be turned into diamond under pressure | chemistry
-The Pacific Ocean is bigger than all continents combined | geography
-Cows have a nearly 360-degree field of view | anatomy
-Your left lung is smaller than your right — to fit the heart | anatomy
-There is a river beneath the Amazon river | geology
-Trees can live for thousands of years | plant biology
-A group of jellyfish is called a smack | language delight
-A cloud can hold up to 500,000 gallons of water | atmospheric science
-Rainbows can appear at night — moonbows | atmospheric science
-Sea otters have a pocket of skin under each arm | anatomy
-Newborn kangaroos are blind and hairless | biology
-Some frogs live 30 years underground | animal biology
-Ravens can imitate human speech | animal intelligence
-A shrimp's nervous system runs through its body | anatomy
-The largest snowflake ever recorded was 15 inches wide | atmospheric science
-There are octopuses that use coconut shells as armor | animal intelligence
-Sharks can detect a drop of blood in a million drops of water | animal senses
-Bees decide who becomes queen based on diet | animal biology
-The oldest known cat lived 38 years | animal biology
-Some fish change sex during their lives | biology surprise
-There is a lake in Antarctica so salty it never freezes | geology
-Baby dolphins have whiskers when they're born | animal biology
-Sea turtles cry to expel salt | animal biology
-Sound waves can move objects — acoustic levitation | physics
-There is a planet where it rains molten glass | space wonder
-The largest living organism is a fungus in Oregon | biology
-Baby elephants are usually born weighing 200 pounds | animal biology
-Your body produces about 25 million new cells every second | body fact
-Bananas ripen faster next to other fruit | chemistry
-A dog's sense of smell is 10,000× better than ours | animal senses
-Some cats have thumbs — they're called polydactyl | animal biology
-There is a city in Turkey older than the pyramids | history
-Whales can hold their breath for over 90 minutes | animal biology
-Fireflies flash in coordinated patterns to attract mates | animal behavior
-A group of owls is called a parliament | language delight
-Bees can be trained to detect explosives | animal intelligence
-The Antarctic ice sheet holds 70% of Earth's fresh water | geography
-Cats can drink seawater — their kidneys filter out the salt | animal biology
-A hummingbird can visit up to 2,000 flowers a day | animal biology
-Some cats are allergic to humans | animal biology
-There is a "singing" sand dune in California | geology
-Ants can lift 50× their own body weight | animal biology
-The universe smells faintly of raspberries | space chemistry
-The Great Barrier Reef is the largest living structure on Earth | geography
-There are more possible shuffles of a 52-card deck than atoms on Earth | math awe
-Baby spiders can travel hundreds of miles by "ballooning" | animal biology
-Some caves are so vast they have their own weather | geology
-Turtles can live over 150 years | animal biology
-The world's tiniest frog is smaller than a dime | animal biology
-Sea otters use rocks as tools | animal intelligence
-A shrimp can create bubbles hotter than the sun's surface | physics
-Some flowers only bloom for one night | plant biology
-Bees have hair on their eyes | anatomy oddity
-Cats can jump up to 6× their body length | animal biology
-The world's largest snowflake fell in Montana in 1887 | atmospheric science
-Baby octopuses hatch fully independent | animal biology
-The Moon is slowly drifting away from Earth | astronomy
-There are trees older than the Egyptian pyramids | deep time
-Baby elephants suck their trunks like babies suck thumbs | animal emotion
-Ants can teach each other | animal intelligence
-Peacocks display their tails to attract mates through vibration | animal biology
-The largest volcano in our solar system is on Mars | space geography
-Fish can drown | biology surprise
-Baby whales grow up to 200 pounds a day | animal biology
-Some snakes give live birth — no eggs | animal biology
-Bees can recognize individual bee faces | animal intelligence
-The world's largest ocean wave was 1,720 feet tall | geography
-A shrimp can generate sound louder than a jet engine | physics
-Trees release chemicals that call predators of the bugs eating them | plant defense
-Baby giraffes can walk within an hour of birth | animal biology
-Cats have three eyelids | anatomy
-The world's deepest fish lives 27,000 feet below the surface | ocean biology
-Some plants can hear water flowing underground | plant biology
-Sea otters wrap themselves in kelp to sleep | animal behavior
-Baby zebras are born with brown-and-white stripes | animal biology
-Bees form a "sleeping cluster" at night | animal behavior
-Some frogs freeze solid every winter — and survive | animal biology
-A single beehive can travel over 55,000 miles to make one pound of honey | animal biology
-Butterflies see colors we can't imagine | animal senses
-The world's oldest recorded human lived 122 years | biology
-Sea horses have no stomachs | anatomy
-Baby pandas are pink and smaller than a stick of butter | animal biology
-The universe is expanding faster every year | cosmology
-Some octopuses can taste with their arms | anatomy
-There is a shrimp so fast it superheats water into plasma | physics
-Baby elephants stay with their mothers for 16 years | animal biology
-Trees "sleep" at night — their branches droop | plant biology
-The average cloud is denser than air but still floats | atmospheric physics
-Bees can sense electric fields on flowers | animal senses
+# Total: 230
