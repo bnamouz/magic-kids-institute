@@ -10,6 +10,30 @@ from .. import config
 MUSIC_DIR = config.ASSETS / "music"
 
 
+def _overlays_vf(target: float) -> str:
+    """Return ffmpeg overlay filters for retention boosts:
+    - Hook flash: bright yellow 'MAGIC INSIDE!' text in first 2s
+    - Subscribe CTA: 'SUBSCRIBE for daily magic!' in last 2s
+    Both use drawtext with fontcolor + shadow, no external font file needed.
+    """
+    cta_start = max(0.5, target - 2.5)
+    # DejaVu Sans is present in the sandbox/container by default
+    font = "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"
+    hook = (
+        f"drawtext=fontfile={font}:text='MAGIC INSIDE\\!':"
+        "fontsize=120:fontcolor=yellow:borderw=6:bordercolor=black:"
+        "x=(w-text_w)/2:y=h*0.15:"
+        "enable='between(t,0,2)'"
+    )
+    cta = (
+        f"drawtext=fontfile={font}:text='SUBSCRIBE for daily magic\\!':"
+        "fontsize=70:fontcolor=white:borderw=5:bordercolor=purple:"
+        "x=(w-text_w)/2:y=h*0.82:"
+        f"enable='between(t,{cta_start},{target})'"
+    )
+    return f"{hook},{cta}"
+
+
 def _run(cmd: list[str]) -> None:
     subprocess.run(cmd, check=True, capture_output=True)
 
@@ -147,7 +171,7 @@ def compose_fact(
 
     music_files = list(MUSIC_DIR.glob("*.mp3"))
     music = random.choice(music_files) if music_files else None
-    vf = f"subtitles='{captions_srt.as_posix()}':force_style='{_caption_style()}'"
+    vf = f"subtitles='{captions_srt.as_posix()}':force_style='{_caption_style()}',{_overlays_vf(target)}"
     fade_start = max(0.0, target - 2.0)
 
     if music:
@@ -219,7 +243,7 @@ def compose_song(
         ])
         tmp_video = looped
 
-    vf = f"subtitles='{captions_srt.as_posix()}':force_style='{_caption_style()}'"
+    vf = f"subtitles='{captions_srt.as_posix()}':force_style='{_caption_style()}',{_overlays_vf(target)}"
     # Add fade-out on audio in last 2 seconds so song ends cleanly at cut
     fade_start = max(0.0, target - 2.0)
     _run([

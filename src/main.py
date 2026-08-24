@@ -8,7 +8,7 @@ import datetime as dt, json, sys, traceback
 from pathlib import Path
 
 from . import config, db
-from .steps import script, visuals, voice, compose, upload, song as song_step
+from .steps import script, visuals, voice, compose, upload, song as song_step, thumbnail
 
 
 LUMI_PREFIX = (
@@ -45,7 +45,14 @@ def run_fact(run_dir: Path) -> None:
         db.update_video(video_id, status="rendered")
         print(f"[5/6] composed: {final}")
 
-        yt_id = upload.upload_short(final, plan["title"], plan["narration"], plan["hashtags"])
+        thumb = None
+        try:
+            thumb = thumbnail.make_thumbnail({"title": plan["title"]}, run_dir / "thumb.png")
+            print(f"[5b/6] thumbnail: {thumb}")
+        except Exception as te:
+            print(f"[5b/6] thumbnail generation failed (non-fatal): {te}")
+
+        yt_id = upload.upload_short(final, plan["title"], plan["narration"], plan["hashtags"], thumbnail_path=thumb)
         db.update_video(video_id, status="uploaded", youtube_id=yt_id)
         db.mark_topic_used(topic["id"])
         print(f"[6/6] uploaded: https://youtube.com/shorts/{yt_id}")
@@ -95,7 +102,14 @@ def run_song(run_dir: Path) -> None:
         db.update_video(video_id, status="rendered")
         print(f"[5/6] composed: {final}")
 
-        yt_id = upload.upload_short(final, plan["title"], plan["lyrics"], plan["hashtags"])
+        thumb = None
+        try:
+            thumb = thumbnail.make_thumbnail({"title": plan["title"]}, run_dir / "thumb.png")
+            print(f"[5b/6] thumbnail: {thumb}")
+        except Exception as te:
+            print(f"[5b/6] thumbnail generation failed (non-fatal): {te}")
+
+        yt_id = upload.upload_short(final, plan["title"], plan["lyrics"], plan["hashtags"], thumbnail_path=thumb)
         db.update_video(video_id, status="uploaded", youtube_id=yt_id)
         db.mark_topic_used(topic["id"])
         print(f"[6/6] uploaded: https://youtube.com/shorts/{yt_id}")

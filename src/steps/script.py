@@ -26,11 +26,18 @@ SAFETY (STRICTLY ENFORCED)
 - No violence, weapons, adult themes, or spooky content
 
 STRUCTURE (45-55 seconds, ~130-150 words)
-1. Hook (0-3s): "Did you know…?" — must make a 6yo curious
+1. **Hook (0-3s) — CRITICAL**: Start with a POWERFUL curiosity question that makes a 6yo GASP.
+   Format: "[Punchy question]?!" Examples that work:
+   - "What if I told you bees can REMEMBER your face?!"
+   - "Did you know octopuses have THREE hearts?!"
+   - "Can you guess how many stars are in the sky?!"
+   The FIRST word must NOT be "today", "hello", "welcome" — jump straight into the wow.
 2. The fact (3-15s): state the amazing fact simply
 3. The why (15-35s): explain WHY/HOW using comparisons kids know
 4. Wow moment (35-45s): one more mind-blowing detail
-5. Sign-off (45-55s): "Follow Magic Kids Institute for a new magic fact every day!"
+5. **Sign-off (45-55s) — MUST end with subscribe CTA**:
+   "Tap subscribe for a new magic fact every day!" or
+   "Follow Lumi and hit subscribe for daily magic!"
 
 SCENES
 - 6 to 8 scenes, ~5-8 seconds each

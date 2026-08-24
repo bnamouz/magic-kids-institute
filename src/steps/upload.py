@@ -1,6 +1,8 @@
 """Step 6: upload the finished MP4 to YouTube as a Short.
 
 Every video is Made For Kids (COPPA). English-only channel.
+Also uploads a custom thumbnail (best-effort; ignored if account not verified).
+Comments are DISABLED on Made-For-Kids videos, so we don't post an auto-comment.
 """
 from __future__ import annotations
 from pathlib import Path
@@ -9,6 +11,7 @@ from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
 from googleapiclient.discovery import build
 from googleapiclient.http import MediaFileUpload
+from googleapiclient.errors import HttpError
 from .. import config
 
 SCOPES = ["https://www.googleapis.com/auth/youtube.upload"]
@@ -37,6 +40,7 @@ def upload_short(
     title: str,
     description: str,
     hashtags: list[str],
+    thumbnail_path: Path | None = None,
 ) -> str:
     yt = _service()
     tags_line = " ".join(hashtags)
@@ -45,7 +49,8 @@ def upload_short(
         f"{description}\n\n"
         f"{tags_line}\n\n"
         f"{config.BRAND_NAME} - {config.BRAND_TAGLINE}\n"
-        f"{follow}"
+        f"{follow}\n\n"
+        f"SUBSCRIBE for a new magic fact and song every day!"
     )
     body = {
         "snippet": {
@@ -66,4 +71,18 @@ def upload_short(
     resp = None
     while resp is None:
         _, resp = req.next_chunk()
-    return resp["id"]
+    video_id = resp["id"]
+
+    # Best-effort thumbnail upload (requires channel verification)
+    if thumbnail_path and thumbnail_path.exists():
+        try:
+            yt.thumbnails().set(
+                videoId=video_id,
+                media_body=MediaFileUpload(str(thumbnail_path), mimetype="image/png"),
+            ).execute()
+            print(f"[upload] custom thumbnail applied to {video_id}")
+        except HttpError as e:
+            # Common: 403 if channel unverified for custom thumbnails
+            print(f"[upload] thumbnail upload skipped: {e.status_code} {e.reason}")
+
+    return video_id
