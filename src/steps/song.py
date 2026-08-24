@@ -32,11 +32,18 @@ SAFETY RULES (STRICTLY ENFORCED)
 - Do NOT rhyme by reaching for archaic/dated words — modern kid English only
 - If a rhyme is hard, change the whole line rather than force a banned/awkward word
 
-SONG STRUCTURE (30-45 seconds total; ~50-70 syllables of lyrics)
+SONG STRUCTURE (35-50 seconds total; ~65-90 syllables of lyrics)
+- **Opening Hook (1 short line, 3-5 words) — CRITICAL for retention**:
+  A punchy sung question or exclamation that grabs a 6yo in the first 3 seconds.
+  Examples: "Hey friends, are you ready?!", "Lumi's here, let's sing!", "Can you count with me?!"
+  This line is sung with high energy, higher pitch, like a call-out.
 - Verse 1 (2 lines, rhyming AABB or ABAB)
 - Chorus (2 lines with a fun repetitive hook that kids can sing back)
 - Verse 2 (2 lines, extending the story)
 - Chorus (repeat — same lines exactly)
+- **Outro (1 short line, 4-6 words) — MUST include subscribe CTA**:
+  Examples: "Subscribe for more magic, bye-bye!", "Sing along tomorrow with Lumi!", "Hit subscribe for daily songs!"
+  Sung cheerfully as the song fades.
 
 VISUAL SCENES
 6 to 8 scenes, ~5-6 seconds each, in bright cartoon/Pixar picture-book style.
