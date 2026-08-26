@@ -4,7 +4,7 @@ Uses a cartoon/kids-book art direction — bright, cheerful, no realism,
 enforced by prepending a strong style prefix to every image prompt.
 """
 from __future__ import annotations
-import asyncio, os, urllib.request
+import asyncio, base64, os, urllib.request
 from pathlib import Path
 import fal_client
 from .. import config
@@ -45,8 +45,10 @@ async def _image(prompt: str, out: Path) -> Path:
 
 
 async def _motion(image_path: Path, motion_prompt: str, seconds: int, out: Path) -> Path:
+    # Encode image inline as data-URL to avoid fal.ai storage upload (which fails from Railway)
     with open(image_path, "rb") as f:
-        data_url = await fal_client.upload_async(f.read(), "image/png")
+        img_b64 = base64.b64encode(f.read()).decode("ascii")
+    data_url = f"data:image/png;base64,{img_b64}"
     handler = await fal_client.submit_async(
         config.MOTION_MODEL,
         arguments={
