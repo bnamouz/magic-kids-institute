@@ -1,21 +1,24 @@
-"""Generate a bold YouTube Shorts thumbnail (1080x1920) using gpt-image."""
+"""Generate a YouTube thumbnail (1280x720, 16:9 landscape as required by YouTube)."""
 from __future__ import annotations
 from pathlib import Path
 import base64, requests
+from PIL import Image
+import io
 from .. import config
 
 
 def make_thumbnail(topic: dict, out: Path) -> Path:
-    """Generate a vertical 1080x1920 thumbnail with Lumi + big keyword text.
+    """Generate a landscape 1280x720 thumbnail with Lumi + big keyword text.
 
-    Uses OpenAI images API directly (gpt-image-1).
+    YouTube requires 16:9 landscape thumbnails; 9:16 vertical images are rejected.
+    Uses OpenAI images API directly (gpt-image-1), then resizes to 1280x720.
     """
     keyword = _keyword(topic["title"])
     prompt = (
-        f"YouTube Shorts thumbnail, 9:16 vertical. "
+        f"YouTube thumbnail, 16:9 landscape. "
         f"Lumi the mascot (cheerful glowing yellow lightbulb with big smiley eyes, "
         f"rosy cheeks, tiny rounded arms, purple base, sparkles around her) fills "
-        f"the left half of the frame, looking excited and pointing at HUGE bold "
+        f"the left third of the frame, looking excited and pointing at HUGE bold "
         f"text on the right that reads: \"{keyword.upper()}\" in chunky bright "
         f"yellow letters with thick black outline and drop shadow. "
         f"Background: vibrant gradient (purple to pink to sky-blue) with cartoon "
@@ -33,7 +36,7 @@ def make_thumbnail(topic: dict, out: Path) -> Path:
         json={
             "model": "gpt-image-1",
             "prompt": prompt,
-            "size": "1024x1536",
+            "size": "1536x1024",
             "quality": "medium",
             "n": 1,
         },
@@ -41,7 +44,12 @@ def make_thumbnail(topic: dict, out: Path) -> Path:
     )
     r.raise_for_status()
     b64 = r.json()["data"][0]["b64_json"]
-    out.write_bytes(base64.b64decode(b64))
+    raw = base64.b64decode(b64)
+
+    # Resize to YouTube's exact recommended size (1280x720) and save as JPEG < 2MB
+    img = Image.open(io.BytesIO(raw)).convert("RGB")
+    img = img.resize((1280, 720), Image.LANCZOS)
+    img.save(out, "JPEG", quality=90, optimize=True)
     return out
 
 

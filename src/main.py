@@ -47,7 +47,7 @@ def run_fact(run_dir: Path) -> None:
 
         thumb = None
         try:
-            thumb = thumbnail.make_thumbnail({"title": plan["title"]}, run_dir / "thumb.png")
+            thumb = thumbnail.make_thumbnail({"title": plan["title"]}, run_dir / "thumb.jpg")
             print(f"[5b/6] thumbnail: {thumb}")
         except Exception as te:
             print(f"[5b/6] thumbnail generation failed (non-fatal): {te}")
@@ -117,7 +117,7 @@ def run_song(run_dir: Path) -> None:
 
         thumb = None
         try:
-            thumb = thumbnail.make_thumbnail({"title": plan["title"]}, run_dir / "thumb.png")
+            thumb = thumbnail.make_thumbnail({"title": plan["title"]}, run_dir / "thumb.jpg")
             print(f"[5b/6] thumbnail: {thumb}")
         except Exception as te:
             print(f"[5b/6] thumbnail generation failed (non-fatal): {te}")
